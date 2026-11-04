@@ -162,5 +162,29 @@ Content-Type: application/json
     loadEpoch();
     setInterval(loadEpoch, 10000);
   </script>
+
+  <!-- Cloudflare Edge Real-Time Visit Telemetry Beacon -->
+  <script>
+    (function() {
+      try {
+        const payload = JSON.stringify({
+          site: "agent-epoch",
+          path: window.location.pathname || "/",
+          referrer: document.referrer || "direct"
+        });
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon("https://legible-check.ezealfa.workers.dev/api/analytics/visit", payload);
+        } else {
+          fetch("https://legible-check.ezealfa.workers.dev/api/analytics/visit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: payload,
+            keepalive: true
+          });
+        }
+      } catch(e) {}
+    })();
+  </script>
+
 </body>
 </html>
